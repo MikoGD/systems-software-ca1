@@ -7,7 +7,7 @@
 
 int lock_folder(char *folder_path)
 {
-  char *command = "chgrp 1001 ";
+  char *command = "chgrp 1001 \0";
   int folder_path_length = strlen(folder_path);
   int command_length = strlen(command);
   char *execute = (char *)malloc((folder_path_length + command_length) * sizeof(char));
@@ -20,7 +20,7 @@ int lock_folder(char *folder_path)
 
 int unlock_folder(char *folder_path)
 {
-  char *command = "chgrp 1002 ";
+  char *command = "chgrp 1002 \0";
   int folder_path_length = strlen(folder_path);
   int command_length = strlen(command);
   char *execute = (char *)malloc((folder_path_length + command_length) * sizeof(char));
