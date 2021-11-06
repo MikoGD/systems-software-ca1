@@ -7,6 +7,5 @@
 
 int transfer_files(char *dest_path, char *src_path);
 int backup_folder(char *backup_path, char *folder_to_backup_path);
-int watch_directory(char *directory_path);
 
 #endif
