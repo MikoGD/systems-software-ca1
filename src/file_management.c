@@ -32,7 +32,7 @@ int transfer_files(char *dest_path, char *src_path)
 
 int backup_folder(char *backup_path, char *folder_to_backup_path)
 {
-  char *command = "zip -r -j ";
+  char *command = "zip -r ";
   char *datetime = get_local_datetime_str();
   size_t command_length = strlen(command);
   size_t dest_path_length = strlen(backup_path);
