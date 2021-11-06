@@ -5,7 +5,7 @@ OBJ_DIR := obj
 BIN_DIR := bin
 
 EXE := $(BIN_DIR)/main
-SRC := $(wildcard $(SRC_DIR)/*.c)
+SRC := $(filter-out src/send_message.c, $(wildcard $(SRC_DIR)/*.c))
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CPPFLAGS := -Iinclude -MMD -MP
@@ -20,6 +20,12 @@ $(EXE): $(OBJ) | $(BIN_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+send: $(OBJ_DIR)/send_message.o | $(BIN_DIR)
+	$(CC) $(CFLAGS) $< -o $(BIN_DIR)/$@
+
+$(OBJ_DIR)send_message.o: $(SRC_DIR)/send_message.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 $(BIN_DIR) $(OBJ_DIR):
 	mkdir -p $@
