@@ -8,7 +8,7 @@
 
 char *get_local_date_str_system_format()
 {
-  FILE *f = popen("date '+\%x'", "r\0");
+  FILE *f = popen("date --date=\"yesterday\" '+\%x'", "r\0");
 
   char *line;
   size_t length;
