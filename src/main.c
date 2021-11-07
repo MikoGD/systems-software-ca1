@@ -59,7 +59,7 @@ int main()
         lock_folder_to_readonly("/srv\0");
         backup_folder("/srv/backups/\0", "srv/*\0");
         transfer_files("/srv/dashboard/\0", "/srv/reports/*\0");
-        create_aureport("monitor-example\0", "/var/file_management_reports\0");
+        create_aureport("monitor-files\0", "/var/file_management_reports\0");
         unlock_folder_from_readonly("/srv\0");
       }
     }
