@@ -28,13 +28,11 @@ void lock_folder_to_readonly(char *folder_path)
   {
     if (WEXITSTATUS(status) == 0)
     {
-      syslog(LOG_INFO, "exiting locking folder of %s to readonly with status %d: %s", folder_path, WEXITSTATUS(status),
-             strerror(errno));
+      syslog(LOG_INFO, "exiting locking folder of %s to readonly with status %d", folder_path, WEXITSTATUS(status));
     }
     else
     {
-      syslog(LOG_ERR, "exiting locking folder of %s to readonly with status %d: %s", folder_path, WEXITSTATUS(status),
-             strerror(errno));
+      syslog(LOG_ERR, "exiting locking folder of %s to readonly with status %d", folder_path, WEXITSTATUS(status));
     }
   }
 
@@ -45,7 +43,7 @@ void unlock_folder_from_readonly(char *folder_path)
 {
   openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
 
-  char *command = "chgrp -R 1002 %s && chown -R 0 %s && chmod -R g+w %s\0";
+  char *command = "chgrp -R 1002 %s && chown -R 0 %s && chmod -R g+rwx %s\0";
   int folder_path_length = strlen(folder_path);
   int command_length = strlen(command);
   // +1 for \0
@@ -63,13 +61,11 @@ void unlock_folder_from_readonly(char *folder_path)
   {
     if (WEXITSTATUS(status) == 0)
     {
-      syslog(LOG_INFO, "exiting unlocking folder of %s from readonly with status %d: %s", folder_path,
-             WEXITSTATUS(status), strerror(errno));
+      syslog(LOG_INFO, "exiting unlocking folder of %s from readonly with status %d", folder_path, WEXITSTATUS(status));
     }
     else
     {
-      syslog(LOG_ERR, "exiting unlocking folder of %s from readonly with status %d: %s", folder_path,
-             WEXITSTATUS(status), strerror(errno));
+      syslog(LOG_ERR, "exiting unlocking folder of %s from readonly with status %d", folder_path, WEXITSTATUS(status));
     }
   }
 
