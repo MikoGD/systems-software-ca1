@@ -1,8 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <syslog.h>
 #include <time.h>
 #include <unistd.h>
 #include "utils.h"
+
+char *get_local_date_str_system_format()
+{
+  FILE *f = popen("date '+\%x'", "r\0");
+
+  char *line;
+  size_t length;
+  ssize_t read = getline(&line, &length, f);
+
+  openlog("file_management\0", LOG_PID | LOG_CONS, LOG_DAEMON);
+  
+  if (read == -1)
+  {
+    syslog(LOG_ERR, "Failed to read date");
+    return "\0";
+  }
+
+  int line_length = strlen(line);
+  line[line_length - 1] = '\0';
+
+  printf("line: %s\n", line);
+
+  fclose(f);
+
+  return line;
+}
 
 char *get_local_datetime_str()
 {
