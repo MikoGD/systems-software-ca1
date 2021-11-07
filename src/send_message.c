@@ -55,8 +55,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    printf("message sent\n");
-    syslog(LOG_INFO, "sent message of %s", buf.mtext, strerror(errno));
+    syslog(LOG_INFO, "sent message of %s", buf.mtext);
   }
 
   closelog();
