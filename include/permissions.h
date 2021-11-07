@@ -2,7 +2,7 @@
 
 #define MANAGEMENT_PERMISSIONS
 
-int lock_folder(char *folder);
-int unlock_folder(char *folder);
+void lock_folder_to_readonly(char *folder_path);
+void unlock_folder_from_readonly(char *folder_path);
 
 #endif
