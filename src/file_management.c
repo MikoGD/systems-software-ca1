@@ -5,6 +5,7 @@
 #include <syslog.h>
 #include <unistd.h>
 #include "file_management.h"
+#include "utils.h"
 
 void transfer_files(char *dest_path, char *src_path)
 {
@@ -44,7 +45,7 @@ void transfer_files(char *dest_path, char *src_path)
 
 void backup_folder(char *backup_path, char *folder_to_backup_path)
 {
-  char *command = "zip -r \0";
+  char *command = "zip -r %s%s.zip %s\0";
   char *datetime = get_local_datetime_str();
   size_t command_length = strlen(command);
   size_t dest_path_length = strlen(backup_path);
@@ -52,16 +53,9 @@ void backup_folder(char *backup_path, char *folder_to_backup_path)
   size_t datetime_length = strlen(datetime);
 
   // +4 for space between src and dest and length of .zip and \0
-  char *execute = (char *)calloc((command_length + dest_path_length + src_path_length + datetime_length + 5), sizeof(char));
+  char *execute = (char *)calloc((command_length + dest_path_length + src_path_length + datetime_length + 1), sizeof(char));
 
-  strcpy(execute, command);
-  strcat(execute, backup_path);
-  strcat(execute, datetime);
-  strcat(execute, ".zip\0");
-  strcat(execute, " \0");
-  strcat(execute, folder_to_backup_path);
-
-  printf("execute: %s\n", execute);
+  sprintf(execute, command, backup_path, datetime, folder_to_backup_path);
 
   int status = system(execute);
 
@@ -123,5 +117,6 @@ void check_for_empty_folders(char *folder_path)
     syslog(LOG_INFO, "Report for %s is missing", line);
   } while ((read = getline(&line, &length, f)) != -1);
 
+  fclose(f);
   closelog();
 }
