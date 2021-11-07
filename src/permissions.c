@@ -10,7 +10,7 @@ void lock_folder_to_readonly(char *folder_path)
 {
   openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
 
-  char *command = "chgrp -R 1002 %s && chown -R 0 %s && chmod -R g-w %s\0";
+  char *command = "chgrp -R managers %s && chown -R root %s && chmod -R g-w %s\0";
   int folder_path_length = strlen(folder_path);
   int command_length = strlen(command);
   // +1 for \0
@@ -43,7 +43,7 @@ void unlock_folder_from_readonly(char *folder_path)
 {
   openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
 
-  char *command = "chgrp -R 1002 %s && chown -R 0 %s && chmod -R g+rwx %s\0";
+  char *command = "chgrp -R managers %s && chown -R root %s && chmod -R g+rwx %s\0";
   int folder_path_length = strlen(folder_path);
   int command_length = strlen(command);
   // +1 for \0

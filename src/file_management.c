@@ -9,14 +9,14 @@
 
 void transfer_files(char *dest_path, char *src_path)
 {
-  char *command = "mv -f %s %s\0";
+  char *command = "cp -r %s/. %s/. && rm %s/**/*.xml\0";
   size_t command_length = strlen(command);
   size_t dest_path_length = strlen(dest_path);
   size_t src_path_length = strlen(src_path);
 
   // +1 for \0
-  char *execute = (char *)calloc((command_length + dest_path_length + src_path_length + 1), sizeof(char));
-  sprintf(execute, command, src_path, dest_path);
+  char *execute = (char *)calloc((command_length + dest_path_length + (src_path_length * 2) + 1), sizeof(char));
+  sprintf(execute, command, src_path, dest_path, src_path);
 
   int status = system(execute);
 
