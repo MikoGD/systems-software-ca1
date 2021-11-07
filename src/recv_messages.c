@@ -2,43 +2,44 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <syslog.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include "message.h"
 #include "file_management.h"
 
-int start_message_listen()
+void start_message_listen()
 {
   MsgBuf buf;
   int msqid;
   key_t key;
 
+  openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
+
   if ((key = ftok("/etc/msgq.conf", 42)) == -1)
   {
-    perror("ftok");
-    exit(1);
+    syslog(LOG_ERR, "error getting key for receiving message queue: %s", strerror(errno));
+    exit(EXIT_FAILURE);
   }
-
-  printf("key: %d\n", key);
 
   if ((msqid = msgget(key, PERMS | IPC_CREAT)) == -1)
   {
-    perror("msgget");
-    exit(1);
+    syslog(LOG_ERR, "error getting queue for receiving: %s", strerror(errno));
+    exit(EXIT_FAILURE);
   }
 
-  printf("message queue: ready to receive messages.\n");
+  closelog();
 
   while (1)
   {
     if (msgrcv(msqid, &buf, sizeof(buf.mtext), 0, 0) == -1)
     {
-      perror("msgrcv");
-      exit(1);
+      openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
+      syslog(LOG_ERR, "error on receiving message: %s", strerror(errno));
+      closelog();
+      exit(EXIT_FAILURE);
     }
-
-    printf("message recieved\n");
 
     if (atoi(buf.mtext) == TRANSFER)
     {
@@ -51,6 +52,4 @@ int start_message_listen()
       backup_folder("/home/mikael/ca1/example/example_backups/", "/home/mikael/ca1/example/*");
     }
   }
-
-  return 0;
 }

@@ -16,6 +16,6 @@ typedef struct MsgBuf
   char mtext[200];
 } MsgBuf;
 
-int start_message_listen();
+void start_message_listen();
 
 #endif
