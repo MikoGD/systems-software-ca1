@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if ((key = ftok("/etc/msgq.conf", 'B')) == -1)
+  if ((key = ftok("/etc/msgq.conf", 42)) == -1)
   {
     perror("ftok");
     exit(1);

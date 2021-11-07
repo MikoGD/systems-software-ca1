@@ -14,7 +14,7 @@ int start_message_listen()
   int msqid;
   key_t key;
 
-  if ((key = ftok("/etc/msgq.conf", 'B')) == -1)
+  if ((key = ftok("/etc/msgq.conf", 42)) == -1)
   {
     perror("ftok");
     exit(1);
@@ -49,11 +49,6 @@ int start_message_listen()
     {
       printf("backup\n");
       backup_folder("/home/mikael/ca1/example/example_backups/", "/home/mikael/ca1/example/*");
-    }
-    else
-    {
-      printf("uknown method\n");
-      return 1;
     }
   }
 
