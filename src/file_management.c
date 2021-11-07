@@ -2,35 +2,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <syslog.h>
-#include <time.h>
 #include <unistd.h>
 #include "file_management.h"
 
-int transfer_files(char *dest_path, char *src_path)
+void transfer_files(char *dest_path, char *src_path)
 {
-  char *command = "mv -f \0";
+  char *command = "mv -f %s %s\0";
   size_t command_length = strlen(command);
   size_t dest_path_length = strlen(dest_path);
   size_t src_path_length = strlen(src_path);
 
-  // +1 for space between src and dest and for \0
-  char *execute = (char *)calloc((command_length + dest_path_length + src_path_length + 2), sizeof(char));
-
-  strcpy(execute, command);
-  strcat(execute, src_path);
-  strcat(execute, " \0");
-  strcat(execute, dest_path);
-
-  printf("execute: %s\n", execute);
+  // +1 for \0
+  char *execute = (char *)calloc((command_length + dest_path_length + src_path_length + 1), sizeof(char));
+  sprintf(execute, command, src_path, dest_path);
 
   int status = system(execute);
 
-  return status;
+  openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
+
+  if (status < 0)
+  {
+    syslog(LOG_ERR, "error transferring files: %s", strerror(errno));
+  }
+  else if (WIFEXITED(status))
+  {
+    if (WEXITSTATUS(status) == 0)
+    {
+      syslog(LOG_INFO, "exiting transferring files from %s to %s with status %d", src_path, dest_path,
+             WEXITSTATUS(status));
+    }
+    else
+    {
+      syslog(LOG_ERR, "exiting transferring files from %s to %s with status %d", src_path, dest_path,
+             WEXITSTATUS(status));
+    }
+  }
+
+  closelog();
 }
 
-int backup_folder(char *backup_path, char *folder_to_backup_path)
+void backup_folder(char *backup_path, char *folder_to_backup_path)
 {
   char *command = "zip -r \0";
   char *datetime = get_local_datetime_str();
@@ -53,9 +65,27 @@ int backup_folder(char *backup_path, char *folder_to_backup_path)
 
   int status = system(execute);
 
-  return status;
+  openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
 
-  // return 0;
+  if (status < 0)
+  {
+    syslog(LOG_ERR, "error backing up files: %s", strerror(errno));
+  }
+  else if (WIFEXITED(status))
+  {
+    if (WEXITSTATUS(status) == 0)
+    {
+      syslog(LOG_INFO, "exiting backuping files from %s to %s with status %d", folder_to_backup_path, backup_path,
+             WEXITSTATUS(status));
+    }
+    else
+    {
+      syslog(LOG_ERR, "exiting backuping files from %s to %s with status %d", folder_to_backup_path, backup_path,
+             WEXITSTATUS(status));
+    }
+  }
+
+  closelog();
 }
 
 void check_for_empty_folders(char *folder_path)
@@ -69,10 +99,11 @@ void check_for_empty_folders(char *folder_path)
 
   FILE *f = popen(execute, "r\0");
 
+  openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
+
   if (f == NULL)
   {
-    perror("popen");
-    exit(1);
+    syslog(LOG_ERR, "error checking for empty folders: %s", strerror(errno));
   }
 
   char *line = NULL;
@@ -80,8 +111,6 @@ void check_for_empty_folders(char *folder_path)
   ssize_t read = getline(&line, &length, f);
   size_t line_length = strlen(line);
   line[line_length - 1] = '\0';
-
-  openlog("Upload checker", LOG_PID | LOG_CONS, LOG_DAEMON);
 
   if (read == -1)
   {
@@ -91,7 +120,7 @@ void check_for_empty_folders(char *folder_path)
 
   do
   {
-    syslog(LOG_INFO, "%s is empty", line);
+    syslog(LOG_INFO, "Report for %s is missing", line);
   } while ((read = getline(&line, &length, f)) != -1);
 
   closelog();

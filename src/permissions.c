@@ -26,7 +26,16 @@ void lock_folder_to_readonly(char *folder_path)
   }
   else if (WIFEXITED(status))
   {
-    syslog(LOG_INFO, "exiting locking folder of %s to readonly with status %d: %s", folder_path, WEXITSTATUS(status), strerror(errno));
+    if (WEXITSTATUS(status) == 0)
+    {
+      syslog(LOG_INFO, "exiting locking folder of %s to readonly with status %d: %s", folder_path, WEXITSTATUS(status),
+             strerror(errno));
+    }
+    else
+    {
+      syslog(LOG_ERR, "exiting locking folder of %s to readonly with status %d: %s", folder_path, WEXITSTATUS(status),
+             strerror(errno));
+    }
   }
 
   closelog();
@@ -52,7 +61,16 @@ void unlock_folder_from_readonly(char *folder_path)
   }
   else if (WIFEXITED(status))
   {
-    syslog(LOG_INFO, "exiting unlocking folder of %s from readonly with status %d: %s", folder_path, WEXITSTATUS(status), strerror(errno));
+    if (WEXITSTATUS(status) == 0)
+    {
+      syslog(LOG_INFO, "exiting unlocking folder of %s from readonly with status %d: %s", folder_path,
+             WEXITSTATUS(status), strerror(errno));
+    }
+    else
+    {
+      syslog(LOG_ERR, "exiting unlocking folder of %s from readonly with status %d: %s", folder_path,
+             WEXITSTATUS(status), strerror(errno));
+    }
   }
 
   closelog();

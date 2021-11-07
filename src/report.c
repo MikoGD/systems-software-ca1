@@ -37,7 +37,14 @@ void create_aureport(char *key, char *report_folder_path)
   }
   else if (WIFEXITED(status))
   {
-    syslog(LOG_INFO, "exiting creating aureport with status %d", WEXITSTATUS(status));
+    if (WEXITSTATUS(status) == 0)
+    {
+      syslog(LOG_INFO, "exiting creating aureport with status %d", WEXITSTATUS(status));
+    }
+    else
+    {
+      syslog(LOG_ERR, "exiting creating aureport with status %d", WEXITSTATUS(status));
+    }
   }
 
   closelog();
