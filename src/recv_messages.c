@@ -6,6 +6,7 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include "message.h"
+#include "file_management.h"
 
 int start_message_listen()
 {
@@ -42,10 +43,12 @@ int start_message_listen()
     if (atoi(buf.mtext) == TRANSFER)
     {
       printf("transfer\n");
+      transfer_files("/home/mikael/ca1/example/dashboard/\0", "/home/mikael/ca1/example/reports/*\0");
     }
     else if (atoi(buf.mtext) == BACKUP)
     {
       printf("backup\n");
+      backup_folder("/home/mikael/ca1/example/example_backups/", "/home/mikael/ca1/example/*");
     }
     else
     {

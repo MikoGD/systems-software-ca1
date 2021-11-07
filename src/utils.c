@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 
 #define TIME_STR_LENGTH 50
 
@@ -30,4 +31,33 @@ time_t get_local_datetime_epoch()
 {
   time_t t = time(NULL);
   return t;
+}
+
+void wait_until(int hour, int min, int sec)
+{
+  time_t curr_time;
+  time_t target_time;
+  struct tm target_time_temp;
+
+  time(&curr_time);
+
+  target_time_temp = *localtime(&curr_time);
+
+  target_time_temp.tm_hour = hour;
+  target_time_temp.tm_min = min;
+  target_time_temp.tm_sec = sec;
+
+  target_time = mktime(&target_time_temp);
+
+  time(&curr_time);
+  double seconds = difftime(target_time, curr_time);
+
+  if (seconds <= 0)
+  {
+    target_time += 24 * 60 * 60;
+    seconds = difftime(target_time, curr_time);
+  }
+
+  printf("seconds: %f\n", seconds);
+  sleep(seconds);
 }

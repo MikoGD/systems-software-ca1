@@ -8,5 +8,6 @@
 char *get_local_date_str_system_format();
 char *get_local_datetime_str();
 time_t get_local_datetime_epoch();
+void wait_until();
 
 #endif
