@@ -9,7 +9,7 @@
 
 void transfer_files(char *dest_path, char *src_path)
 {
-  char *command = "cp -r %s/. %s/. && rm %s/**/*.xml\0";
+  char *command = "cp -r %s/. %s/. && rm -f %s/**/*.xml\0";
   size_t command_length = strlen(command);
   size_t dest_path_length = strlen(dest_path);
   size_t src_path_length = strlen(src_path);
