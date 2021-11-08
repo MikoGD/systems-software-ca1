@@ -24,16 +24,16 @@ void *start_message_listen()
   }
 
   /* message queue is deleted and remade to remove old messages */
-  if ((msqid = msgget(key, PERMS)) == -1)
-  {
-    syslog(LOG_ERR, "error getting queue for receiving: %s", strerror(errno));
-    exit(EXIT_FAILURE);
-  }
+  msqid = msgget(key, PERMS);
 
-  if (key != -1 && msgctl(key, IPC_RMID, NULL) == -1)
+  if (msqid != 0)
   {
-    syslog(LOG_ERR, "error on deleting message queue");
-    exit(EXIT_FAILURE);
+    syslog(LOG_DEBUG, "Removing queue with key %d", key);
+    if (msgctl(msqid, IPC_RMID, NULL) == -1)
+    {
+      syslog(LOG_ERR, "error on deleting message queue: %s", strerror(errno));
+      exit(EXIT_FAILURE);
+    }
   }
 
   if ((msqid = msgget(key, PERMS | IPC_CREAT)) == -1)
