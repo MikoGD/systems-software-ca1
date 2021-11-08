@@ -1,0 +1,13 @@
+[Unit]
+Description=File management service
+
+[Service]
+User=root
+WorkingDirectory=/
+KillMode=process
+ExecStart=/usr/local/bin/file_management
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=file_management.service
