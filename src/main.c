@@ -49,12 +49,12 @@ int main()
 
     while (1)
     {
-      wait_until(21, 32, 5);
+      wait_until(15, 35, 30);
+      create_aureport_for_reports_folder();
       check_for_missing_reports();
       make_srv_readonly();
       backup_srv_folder();
       transfer_reports_to_dashbaord();
-      create_aureport_for_reports_folder();
       remove_readonly_from_srv();
     }
   }

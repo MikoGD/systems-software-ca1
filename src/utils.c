@@ -25,9 +25,14 @@ char *get_local_date_str_system_format()
   int line_length = strlen(line);
   line[line_length - 1] = '\0';
 
-  printf("line: %s\n", line);
+  int status = fclose(f);
 
-  fclose(f);
+  if (status != 0)
+  {
+    syslog(LOG_ERR, "failed to close stream when reading system format date");
+  }
+
+  closelog();
 
   return line;
 }
