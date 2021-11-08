@@ -21,9 +21,6 @@ int main()
 
   if (main_pid > 0)
   {
-    openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
-    syslog(LOG_DEBUG, "killing parent");
-    closelog();
     exit(EXIT_SUCCESS);
   }
   else if (main_pid == 0)
@@ -31,9 +28,12 @@ int main()
     if (main_pid == 0)
     {
       openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
-      syslog(LOG_DEBUG, "creating daemon");
+      syslog(LOG_INFO, "starting file management daemon");
+      closelog();
+
       if (setsid() < 0)
       {
+        syslog(LOG_ERR, "Failed to create a session");
         exit(EXIT_FAILURE);
       }
 
@@ -41,6 +41,7 @@ int main()
 
       if (chdir("/") < 0)
       {
+        syslog(LOG_ERR, "Failed to set current working directory");
         exit(EXIT_FAILURE);
       }
 
@@ -49,7 +50,6 @@ int main()
         close(x);
       }
 
-      syslog(LOG_DEBUG, "starting daemon loop");
       closelog();
 
       while (1)
