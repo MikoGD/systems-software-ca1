@@ -120,3 +120,18 @@ void check_for_empty_folders(char *folder_path)
   fclose(f);
   closelog();
 }
+
+void check_for_missing_reports()
+{
+  check_for_empty_folders("/srv/reports\0");
+}
+
+void backup_srv_folder()
+{
+  backup_folder("/var/backups/file_management/\0", "/srv/*\0");
+}
+
+void transfer_reports_to_dashbaord()
+{
+  transfer_files("/srv/dashboard/\0", "/srv/reports/*\0");
+}

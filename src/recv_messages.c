@@ -43,11 +43,11 @@ void start_message_listen()
 
     if (atoi(buf.mtext) == TRANSFER)
     {
-      transfer_files("/home/mikael/ca1/example/dashboard/\0", "/home/mikael/ca1/example/reports/*\0");
+      transfer_reports_to_dashbaord();
     }
     else if (atoi(buf.mtext) == BACKUP)
     {
-      backup_folder("/home/mikael/ca1/example/example_backups/", "/home/mikael/ca1/example/*");
+      backup_srv_folder();
     }
   }
 }

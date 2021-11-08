@@ -51,3 +51,8 @@ void create_aureport(char *key, char *report_folder_path)
 
   closelog();
 }
+
+void create_aureport_for_reports_folder()
+{
+  create_aureport("monitor-files\0", "/var/file_management_reports\0");
+}

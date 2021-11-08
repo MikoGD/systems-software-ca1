@@ -28,8 +28,6 @@ int main()
     if (main_pid == 0)
     {
       openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
-      syslog(LOG_INFO, "starting file management daemon");
-      closelog();
 
       if (setsid() < 0)
       {
@@ -55,12 +53,12 @@ int main()
       while (1)
       {
         wait_until(21, 32, 5);
-        check_for_empty_folders("/srv/reports\0");
-        lock_folder_to_readonly("/srv\0");
-        backup_folder("/var/backups/file_management/\0", "srv/*\0");
-        transfer_files("/srv/dashboard/\0", "/srv/reports/*\0");
-        create_aureport("monitor-files\0", "/var/file_management_reports\0");
-        unlock_folder_from_readonly("/srv\0");
+        check_for_missing_reports();
+        make_srv_readonly();
+        backup_srv_folder();
+        transfer_reports_to_dashbaord();
+        create_aureport_for_reports_folder();
+        remove_readonly_from_srv();
       }
     }
   }

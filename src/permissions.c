@@ -71,3 +71,13 @@ void unlock_folder_from_readonly(char *folder_path)
 
   closelog();
 }
+
+void make_srv_readonly()
+{
+  lock_folder_to_readonly("/srv\0");
+}
+
+void remove_readonly_from_srv()
+{
+  unlock_folder_from_readonly("/srv\0");
+}
