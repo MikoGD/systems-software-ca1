@@ -9,7 +9,7 @@
 #include "message.h"
 #include "file_management.h"
 
-void start_message_listen()
+void *start_message_listen()
 {
   MsgBuf buf;
   int msqid;
@@ -20,6 +20,19 @@ void start_message_listen()
   if ((key = ftok("/etc/msgq.conf", 42)) == -1)
   {
     syslog(LOG_ERR, "error getting key for receiving message queue: %s", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+
+  /* message queue is deleted and remade to remove old messages */
+  if ((msqid = msgget(key, PERMS)) == -1)
+  {
+    syslog(LOG_ERR, "error getting queue for receiving: %s", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
+
+  if (key != -1 && msgctl(key, IPC_RMID, NULL) == -1)
+  {
+    syslog(LOG_ERR, "error on deleting message queue");
     exit(EXIT_FAILURE);
   }
 

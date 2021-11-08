@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,65 +14,53 @@
 
 int main()
 {
-  openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
-  syslog(LOG_DEBUG, "starting file management daemon");
-  closelog();
+  pid_t pid = fork();
 
-  pid_t main_pid = fork();
+  if (pid == 0)
+  {
+    openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
+    syslog(LOG_DEBUG, "starting file management daemon");
 
-  if (main_pid > 0)
-  {
-    exit(EXIT_SUCCESS);
-  }
-  else if (main_pid == 0)
-  {
-    if (main_pid == 0)
+    if (setsid() < 0)
     {
-      openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
+      syslog(LOG_ERR, "Failed to create a session");
+      exit(EXIT_FAILURE);
+    }
 
-      if (setsid() < 0)
-      {
-        syslog(LOG_ERR, "Failed to create a session");
-        exit(EXIT_FAILURE);
-      }
+    umask(0);
 
-      umask(0);
+    if (chdir("/") < 0)
+    {
+      syslog(LOG_ERR, "Failed to set current working directory");
+      exit(EXIT_FAILURE);
+    }
 
-      if (chdir("/") < 0)
-      {
-        syslog(LOG_ERR, "Failed to set current working directory");
-        exit(EXIT_FAILURE);
-      }
+    for (int x = sysconf(_SC_OPEN_MAX); x >= 0; x--)
+    {
+      close(x);
+    }
 
-      for (int x = sysconf(_SC_OPEN_MAX); x >= 0; x--)
-      {
-        close(x);
-      }
+    pthread_t id;
 
-      closelog();
+    syslog(LOG_INFO, "starting message listening thread");
+    pthread_create(&id, NULL, start_message_listen, NULL);
 
-      while (1)
-      {
-        wait_until(21, 32, 5);
-        check_for_missing_reports();
-        make_srv_readonly();
-        backup_srv_folder();
-        transfer_reports_to_dashbaord();
-        create_aureport_for_reports_folder();
-        remove_readonly_from_srv();
-      }
+    closelog();
+
+    while (1)
+    {
+      wait_until(21, 32, 5);
+      check_for_missing_reports();
+      make_srv_readonly();
+      backup_srv_folder();
+      transfer_reports_to_dashbaord();
+      create_aureport_for_reports_folder();
+      remove_readonly_from_srv();
     }
   }
   else
   {
-    pid_t message_pid = fork();
-    if (message_pid == 0)
-    {
-      openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
-      syslog(LOG_DEBUG, "starting message listening");
-      closelog();
-      start_message_listen();
-    }
+    exit(EXIT_SUCCESS);
   }
 
   return 0;

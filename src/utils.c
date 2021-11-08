@@ -15,7 +15,7 @@ char *get_local_date_str_system_format()
   ssize_t read = getline(&line, &length, f);
 
   openlog("file_management\0", LOG_PID | LOG_CONS, LOG_DAEMON);
-  
+
   if (read == -1)
   {
     syslog(LOG_ERR, "Failed to read date");
