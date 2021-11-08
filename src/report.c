@@ -8,7 +8,7 @@
 
 void create_aureport(char *key, char *report_folder_path)
 {
-  char *command = "ausearch -k %s -ts %s | aureport -i -k > %s\0";
+  char *command = "ausearch -k %s -ts %s | aureport -i -f > %s\0";
   char *datetime = get_local_datetime_str();
   char *datetime_sys = get_local_date_str_system_format();
   char *report_name = "%s/report_%s.txt\0";
@@ -32,6 +32,7 @@ void create_aureport(char *key, char *report_folder_path)
   int status = system(execute);
 
   openlog("file management", LOG_PID | LOG_CONS, LOG_DAEMON);
+  syslog(LOG_DEBUG, "command to create report: %s", execute);
 
   if (status < 0)
   {
