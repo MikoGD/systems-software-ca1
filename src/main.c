@@ -49,7 +49,7 @@ int main()
 
     while (1)
     {
-      wait_until(15, 35, 30);
+      wait_until(1, 0, 0);
       create_aureport_for_reports_folder();
       check_for_missing_reports();
       make_srv_readonly();
