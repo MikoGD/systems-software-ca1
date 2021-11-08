@@ -26,9 +26,9 @@ void *start_message_listen()
   /* message queue is deleted and remade to remove old messages */
   msqid = msgget(key, PERMS);
 
-  if (msqid != 0)
+  if (msqid != -1)
   {
-    syslog(LOG_DEBUG, "Removing queue with key %d", key);
+    syslog(LOG_DEBUG, "Removing queue with key %d and id %d", key, msqid);
     if (msgctl(msqid, IPC_RMID, NULL) == -1)
     {
       syslog(LOG_ERR, "error on deleting message queue: %s", strerror(errno));

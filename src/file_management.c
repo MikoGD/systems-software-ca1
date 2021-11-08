@@ -133,5 +133,5 @@ void backup_srv_folder()
 
 void transfer_reports_to_dashbaord()
 {
-  transfer_files("/srv/dashboard/\0", "/srv/reports/*\0");
+  transfer_files("/srv/dashboard/\0", "/srv/reports\0");
 }
